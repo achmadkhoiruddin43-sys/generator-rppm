@@ -1,0 +1,1498 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1561\cocoasubrtf610
+{\fonttbl\f0\froman\fcharset0 Times-Roman;\f1\fnil\fcharset0 AppleColorEmoji;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;}
+\paperw12188\paperh18708\margl1440\margr1440\vieww28600\viewh18000\viewkind0
+\deftab720
+\pard\pardeftab720\sl280\partightenfactor0
+
+\f0\fs24 \cf2 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 <!DOCTYPE html>\
+<html lang="id">\
+<head>\
+    <meta charset="UTF-8">\
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">\
+    <title>Generator Perencanaan Pembelajaran</title>\
+    <!-- Memuat Tailwind CSS CDN --><script src="https://cdn.tailwindcss.com"></script>\
+    <!-- Memuat Font Inter --><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">\
+    <style>\
+        body \{\
+            font-family: 'Inter', sans-serif;\
+            background-color: #f4f7f6; /* Warna latar belakang yang lebih halus */\
+        \}\
+        .card \{\
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);\
+            transition: transform 0.3s ease;\
+        \}\
+        .card:hover \{\
+             /* Efek hover minimalis untuk kesan profesional */\
+        \}\
+        .input-field, .textarea-field, .select-field \{\
+            border: 1px solid #d1d5db;\
+            padding: 10px;\
+            border-radius: 8px;\
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);\
+            width: 100%;\
+            margin-top: 4px;\
+        \}\
+        .textarea-field \{\
+            min-height: 80px; /* Tinggi minimal untuk text area */\
+        \}\
+        .input-label \{\
+            display: block;\
+            text-sm font-medium text-gray-700;\
+        \}\
+        \
+        /* Style untuk Print (PDF) */\
+        @media print \{\
+            .card, #result-container \{\
+                box-shadow: none !important;\
+                border: none !important;\
+            \}\
+            body \{\
+                background-color: white;\
+            \}\
+            /* Sembunyikan form dan tombol cetak itu sendiri */\
+            #plan-form, .no-print \{\
+                display: none !important;\
+            \}\
+            #result-container \{\
+                display: block !important; /* Pastikan hasil ditampilkan saat dicetak */\
+                margin-top: 0;\
+                padding: 0;\
+            \}\
+            /* Style cetak untuk hasil */\
+            #plan-output \{\
+                font-size: 11pt;\
+                font-family: 'Times New Roman', Times, serif;\
+            \}\
+            #plan-output h2 \{\
+                font-size: 16pt;\
+                font-family: 'Arial', sans-serif;\
+                border-bottom: 2px solid #000;\
+                padding-bottom: 4px;\
+                margin-top: 18pt;\
+            \}\
+            #plan-output h3 \{\
+                font-size: 14pt;\
+                font-family: 'Arial', sans-serif;\
+                margin-bottom: 6pt;\
+            \}\
+             #plan-output h4 \{\
+                font-size: 12pt;\
+                font-weight: bold;\
+                background-color: #F3F4F6 !important; /* Pastikan bg terlihat di cetak */\
+                -webkit-print-color-adjust: exact; /* Paksa cetak background */\
+                print-color-adjust: exact;\
+            \}\
+            #plan-output .meeting-header \{\
+                background-color: #4f46e5 !important;\
+                color: white !important;\
+                padding: 5px;\
+                margin-top: 15px;\
+                -webkit-print-color-adjust: exact;\
+                print-color-adjust: exact;\
+            \}\
+            /* Hapus warna latar belakang yang tidak perlu dicetak */\
+            .bg-indigo-50, .bg-red-50, .bg-purple-50, .bg-orange-50 \{\
+                background-color: #FFFFFF !important;\
+                border: 1px solid #DDD !important;\
+                -webkit-print-color-adjust: exact;\
+                print-color-adjust: exact;\
+            \}\
+        \}\
+\
+        /* Custom styles for bold header/footer */\
+        .header-bg \{\
+            background-image: linear-gradient(to right top, #4f46e5, #7c3aed); /* Gradien warna yang berani */\
+        \}\
+        .footer-bg \{\
+            background-color: #1f2937; /* Warna gelap yang elegan untuk footer */\
+        \}\
+\
+        /* Loading spinner style */\
+        .spinner \{\
+            display: inline-block;\
+            width: 1.25rem; /* w-5 */\
+            height: 1.25rem; /* h-5 */\
+            border: 4px solid rgba(255, 255, 255, 0.3);\
+            border-radius: 50%;\
+            border-top-color: #ffffff;\
+            animation: spin 1s ease-in-out infinite;\
+            margin-right: 0.75rem; /* mr-3 */\
+        \}\
+        .spinner-dark \{\
+             border-color: rgba(107, 114, 128, 0.3); /* gray-500 */\
+             border-top-color: #4f46e5; /* indigo-600 */\
+             margin-right: 0.5rem; /* mr-2 */\
+        \}\
+        @keyframes spin \{\
+            to \{\
+                transform: rotate(360deg);\
+            \}\
+        \}\
+        .loading-text \{\
+            font-style: italic;\
+            color: #4f46e5; /* indigo-700 */\
+            padding: 1rem 0;\
+            display: flex;\
+            align-items: center;\
+            justify-content: center;\
+        \}\
+\
+        /* Animasi Fade-in untuk Header */\
+        @keyframes fade-in \{\
+            from \{ opacity: 0; transform: translateY(-10px); \}\
+            to \{ opacity: 1; transform: translateY(0); \}\
+        \}\
+        .fade-in \{\
+            animation: fade-in 1s ease-out forwards;\
+        \}\
+\
+        /* Animasi Teks Pelangi */\
+        @keyframes rainbow-text \{\
+            0% \{ background-position: 0% 50%; \}\
+            50% \{ background-position: 100% 50%; \}\
+            100% \{ background-position: 0% 50%; \}\
+        \}\
+        .rainbow-text \{\
+            background: linear-gradient(270deg, #ff7f00, #ff00ff, #00ff00, #00ffff, #ffff00, #ff00ff, #ff7f00);\
+            background-size: 600% 600%;\
+            -webkit-background-clip: text;\
+            background-clip: text;\
+            -webkit-text-fill-color: transparent;\
+            animation: rainbow-text 10s ease infinite;\
+        \}\
+    </style>\
+</head>\
+<body class="p-4 md:p-12">\
+    <div class="max-w-5xl mx-auto">\
+        \
+        <!-- HEADER BARU --><header class="header-bg text-center py-8 md:py-12 mb-10 rounded-xl shadow-lg overflow-hidden">\
+            <h1 class="text-3xl md:text-5xl font-extrabold text-white leading-tight drop-shadow-md fade-in" style="animation-delay: 0.1s;">\
+                Generator Perencanaan Pembelajaran Mendalam\
+            </h1>\
+            <p class="text-base md:text-lg italic text-white mt-4 opacity-90 fade-in rainbow-text font-semibold" style="animation-delay: 0.3s;">\
+                Oleh Achmad Khoiruddin - SMAN 1 Dampal Selatan\
+            </p>\
+            <p class="text-base md:text-lg text-white mt-3 px-4 md:px-0 opacity-90 font-medium fade-in" style="animation-delay: 0.5s;">\
+                Alat Pencetak RPP/Modul Ajar jadi file word\
+            </p>\
+        </header>\
+        <!-- AKHIR HEADER BARU --><!-- Form Input --><div class="card bg-white p-6 md:p-10 rounded-2xl space-y-8 shadow-xl">\
+            <form id="plan-form">\
+                \
+                <!-- Bagian 1: Informasi Umum --><section class="border-b pb-8 border-gray-200">\
+                    <h2 class="text-2xl font-bold text-indigo-800 mb-6">1. Informasi Umum</h2>\
+                    \
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">\
+                        \
+                        <!-- Baris 1: Mapel, Jenjang, Kelas, Semester --><div class="lg:col-span-1 md:col-span-2">\
+                            <label for="mapel" class="input-label">Mata Pelajaran</label>\
+                            <input type="text" id="mapel" class="input-field" placeholder="Contoh: Ilmu Pengetahuan Alam" required>\
+                        </div>\
+                        \
+                        <div>\
+                            <label for="jenjang" class="input-label">Jenjang</label>\
+                            <select id="jenjang" class="select-field" required>\
+                                <option value="" disabled selected>Pilih Jenjang</option>\
+                                <option value="SLB">SLB</option>\
+                                <option value="PAUD">PAUD</option>\
+                                <option value="SD/MI">SD/MI</option>\
+                                <option value="SMP/MTs">SMP/MTs</option>\
+                                <option value="SMA/MA">SMA/MA</option>\
+                                <option value="SMK">SMK</option>\
+                            </select>\
+                        </div>\
+\
+                        <div>\
+                            <label for="kelas" class="input-label">Kelas</label>\
+                            <input type="text" id="kelas" class="input-field" placeholder="Contoh: 10 atau 7" required>\
+                        </div>\
+\
+                        <div>\
+                            <label for="semester" class="input-label">Semester</label>\
+                            <select id="semester" class="select-field" required>\
+                                <option value="" disabled selected>Pilih Semester</option>\
+                                <option value="Ganjil">Ganjil</option>\
+                                <option value="Genap">Genap</option>\
+                            </select>\
+                        </div>\
+\
+                        <!-- Baris 2: Jumlah Pertemuan, Durasi --><div>\
+                            <label for="jml_pertemuan" class="input-label">Jumlah Pertemuan</label>\
+                            <input type="number" id="jml_pertemuan" min="1" class="input-field" value="1" required>\
+                        </div>\
+                        <div class="lg:col-span-3">\
+                            <label for="durasi" class="input-label">Durasi (Contoh: 2 x 45 menit)</label>\
+                            <input type="text" id="durasi" class="input-field" placeholder="Contoh: 2 x 45 menit" required>\
+                        </div>\
+                        \
+                    </div>\
+                </section>\
+\
+                <!-- Bagian 2: Identifikasi --><section class="border-b pb-8 border-gray-200 mt-8">\
+                    <h2 class="text-2xl font-bold text-indigo-800 mb-6">2. Identifikasi</h2>\
+                    <div class="space-y-6">\
+                        \
+                        <!-- Dimensi Profil Lulusan -->\
+                        <div>\
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Dimensi Profil Lulusan yang Dikembangkan (Pilih \uc0\u8805  1)</label>\
+                            <div id="dimensi_profil_checkboxes" class="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-2 text-sm">\
+                                <!-- Checkbox options -->\
+                                <div class="flex items-center">\
+                                    <input type="checkbox" id="dimensi_iman" name="dimensi_profil" value="Keimanan dan ketakwaan kepada Tuhan YME" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">\
+                                    <label for="dimensi_iman" class="ml-2 text-gray-700">Keimanan & Ketakwaan (DPL1)</label>\
+                                </div>\
+                                <div class="flex items-center">\
+                                    <input type="checkbox" id="dimensi_warga" name="dimensi_profil" value="Kewargaan" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">\
+                                    <label for="dimensi_warga" class="ml-2 text-gray-700">Kewargaan (DPL2)</label>\
+                                </div>\
+                                <div class="flex items-center">\
+                                    <input type="checkbox" id="dimensi_kritis" name="dimensi_profil" value="Penalaran Kritis" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">\
+                                    <label for="dimensi_kritis" class="ml-2 text-gray-700">Penalaran Kritis (DPL3)</label>\
+                                </div>\
+                                <div class="flex items-center">\
+                                    <input type="checkbox" id="dimensi_kreatif" name="dimensi_profil" value="Kreativitas" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">\
+                                    <label for="dimensi_kreatif" class="ml-2 text-gray-700">Kreativitas (DPL4)</label>\
+                                </div>\
+                                <div class="flex items-center">\
+                                    <input type="checkbox" id="dimensi_kolaborasi" name="dimensi_profil" value="Kolaborasi" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">\
+                                    <label for="dimensi_kolaborasi" class="ml-2 text-gray-700">Kolaborasi (DPL5)</label>\
+                                </div>\
+                                <div class="flex items-center">\
+                                    <input type="checkbox" id="dimensi_mandiri" name="dimensi_profil" value="Kemandirian" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">\
+                                    <label for="dimensi_mandiri" class="ml-2 text-gray-700">Kemandirian (DPL6)</label>\
+                                </div>\
+                                <div class="flex items-center">\
+                                    <input type="checkbox" id="dimensi_sehat" name="dimensi_profil" value="Kesehatan" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">\
+                                    <label for="dimensi_sehat" class="ml-2 text-gray-700">Kesehatan (DPL7)</label>\
+                                </div>\
+                                <div class="flex items-center">\
+                                    <input type="checkbox" id="dimensi_komunikasi" name="dimensi_profil" value="Komunikasi" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">\
+                                    <label for="dimensi_komunikasi" class="ml-2 text-gray-700">Komunikasi (DPL8)</label>\
+                                </div>\
+                            </div>\
+                        </div>\
+                        \
+                    </div>\
+                </section>\
+                \
+                <!-- Bagian 3: Desain Pembelajaran --><section class="mt-8 space-y-6">\
+                    <h2 class="text-2xl font-bold text-indigo-800 mb-6">3. Desain Pembelajaran</h2>\
+                    \
+                    <div>\
+                        <label for="capaian_pembelajaran" class="input-label">Capaian Pembelajaran</label>\
+                        <textarea id="capaian_pembelajaran" rows="2" class="textarea-field" placeholder="Tuliskan capaian pembelajaran sesuai fase" required></textarea>\
+                    </div>\
+                    \
+                    <div>\
+                        <label for="tujuan_pembelajaran" class="input-label">Tujuan Pembelajaran</Tujuan></label>\
+                        <textarea id="tujuan_pembelajaran" rows="3" class="textarea-field" placeholder="Gunakan KKO, tuliskan kompetensi yang diharapkan. Jika >1 pertemuan, tuliskan tujuan per pertemuan." required></textarea>\
+                    </div>\
+                    \
+                    <div>\
+                        <label for="topik_pembelajaran" class="input-label">Topik Pembelajaran</label>\
+                        <input type="text" id="topik_pembelajaran" class="input-field" placeholder="Tuliskan topik pembelajaran yang relevan dengan CP dan TP" required>\
+                    </div>\
+\
+                    <div>\
+                        <label class="input-label mb-2">Praktik Pedagogis (Model/Strategi/Metode)</label>\
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-2 text-sm">\
+                            <div class="flex items-center">\
+                                <input type="checkbox" id="model_pbl" name="praktik_pedagogis" value="pbl" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">\
+                                <label for="model_pbl" class="ml-2 text-gray-700">Problem-Based Learning</label>\
+                            </div>\
+                             <div class="flex items-center">\
+                                <input type="checkbox" id="model_pjbl" name="praktik_pedagogis" value="pjbl" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">\
+                                <label for="model_pjbl" class="ml-2 text-gray-700">Project-Based Learning</label>\
+                            </div>\
+                             <div class="flex items-center">\
+                                <input type="checkbox" id="model_inkuiri" name="praktik_pedagogis" value="inkuiri" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">\
+                                <label for="model_inkuiri" class="ml-2 text-gray-700">Inkuiri Terbimbing</label>\
+                            </div>\
+                             <div class="flex items-center">\
+                                <input type="checkbox" id="model_discovery" name="praktik_pedagogis" value="discovery" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">\
+                                <label for="model_discovery" class="ml-2 text-gray-700">Discovery Learning</label>\
+                            </div>\
+                             <div class="flex items-center">\
+                                <input type="checkbox" id="model_direct" name="praktik_pedagogis" value="direct" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">\
+                                <label for="model_direct" class="ml-2 text-gray-700">Pembelajaran Langsung</label>\
+                            </div>\
+                             <div class="flex items-center">\
+                                <input type="checkbox" id="model_kontekstual" name="praktik_pedagogis" value="kontekstual" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">\
+                                <label for="model_kontekstual" class="ml-2 text-gray-700">Pembelajaran Kontekstual</label>\
+                            </div>\
+                        </div>\
+                    </div>\
+                    \
+                </section>\
+\
+                <!-- Pilihan LKPD (BARU) --><div class="mt-8 border-t pt-8 border-gray-200">\
+                    <h4 class="text-lg font-semibold text-gray-800 mb-3">Butuh Lampiran LKPD?</h4>\
+                    <p class="text-sm text-gray-600 mb-3">Jika "Ya", AI akan membuatkan draf LKPD (Lampiran 3) berdasarkan Tujuan Pembelajaran Anda.</p>\
+                    <div class="flex space-x-6">\
+                        <label class="flex items-center text-gray-700">\
+                            <input type="radio" name="butuh_lkpd" value="ya" class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">\
+                            <span class="ml-2">Ya, buatkan draf LKPD</span>\
+                        </label>\
+                        <label class="flex items-center text-gray-700">\
+                            <input type="radio" name="butuh_lkpd" value="tidak" class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500" checked>\
+                            <span class="ml-2">Tidak, terima kasih</span>\
+                        </label>\
+                    </div>\
+                </div>\
+\
+                <!-- Tombol Generator --><div class="mt-6">\
+                    <button type="submit" id="generate-button" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-4 rounded-xl transition duration-300 shadow-lg shadow-indigo-300 transform hover:scale-[1.01]">\
+                        <span id="generate-button-text">Buat Perencanaan Pembelajaran</span>\
+                    </button>\
+                </div>\
+            </form>\
+        </div>\
+\
+        <!-- Hasil Generator --><div id="result-container" class="mt-12 hidden">\
+            <h2 class="text-3xl font-bold text-gray-800 mb-4 border-b-4 border-indigo-600 pb-2">DRAF PERENCANAAN PEMBELAJARAN DETAIL</h2>\
+            <div id="plan-output" class="card bg-white p-6 md:p-10 rounded-2xl border border-gray-100 shadow-xl">\
+                <!-- Isi hasil akan dimuat di sini oleh JavaScript --></div>\
+            \
+            <!-- FOOTER HASIL GENERATOR --><footer class="text-center mt-6 py-4 border-t border-gray-300">\
+                <p class="text-sm text-gray-500 font-semibold">Modifikasi oleh Achmad Khoiruddin - SMAN 1 Dampal Selatan</p>\
+            </footer>\
+            <!-- AKHIR FOOTER HASIL GENERATOR --><!-- Tombol Unduh/Cetak (Non-Print) --><div class="no-print mt-4 flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-4">\
+                \
+                <!-- Tombol Unduh Word (.doc) --><button id="download-word-btn" onclick="downloadWord()" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition duration-200 flex items-center justify-center">\
+                    <!-- Ikon Word (Mengganti ikon) --><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">\
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />\
+                    </svg>\
+                    Unduh Draf (Word .doc)\
+                </button>\
+            </div>\
+        </div>\
+    </div>\
+    \
+    <!-- AKHIR FOOTER BARU --><script>\
+        document.getElementById('plan-form').addEventListener('submit', function(e) \{\
+            e.preventDefault();\
+            generatePlan();\
+        \});\
+\
+        // =======================================================================\
+        // I. KONFIGURASI GEMINI API UNTUK GENERASI KONTEN\
+        // =======================================================================\
+        const apiKey = ""; // Canvas will inject this.\
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=$\{apiKey\}`;\
+\
+        // JSON Schema untuk 15 Soal (10 PG, 5 Isian)\
+        const QUESTIONS_SCHEMA = \{\
+            type: "ARRAY",\
+            description: "List of 15 assessment questions (10 multiple choice, 5 short answer) and their answers.",\
+            items: \{\
+                type: "OBJECT",\
+                properties: \{\
+                    "question": \{ "type": "STRING", "description": "The assessment question. For multiple choice, include options (A, B, C, D)." \},\
+                    "answer": \{ "type": "STRING", "description": "The concise and correct answer." \}\
+                \},\
+                propertyOrdering: ["question", "answer"]\
+            \}\
+        \};\
+\
+        // JSON Schema untuk Detail Desain (Peserta Didik, Materi, Lintas Disiplin, Kemitraan, dll.)\
+        const DESIGN_SCHEMA = \{\
+            type: "OBJECT",\
+            properties: \{\
+                "peserta_didik": \{ "type": "STRING", "description": "Analisis singkat kesiapan, minat, dan kebutuhan belajar peserta didik berdasarkan jenjang, kelas, dan topik. (2-3 kalimat)" \},\
+                "materi_pelajaran_analisis": \{ "type": "STRING", "description": "Analisis mendalam materi pelajaran (relevansi, kesulitan, struktur, nilai karakter) berdasarkan topik dan tujuan pembelajaran. (3-4 kalimat)" \},\
+                "lintas_disiplin": \{ "type": "STRING", "description": "Ide singkat 1-2 lintas disiplin ilmu/mapel lain yang relevan dengan mata pelajaran dan topik ini." \},\
+                "kemitraan": \{ "type": "STRING", "description": "Ide kemitraan pembelajaran (Mitra kerjasama untuk berkolaborasi dalam pembelajaran, misal: guru bidang studi lain, orang tua, komunitas, dudi, tokoh masyarakat, institusi) yang relevan dengan topik. (2-3 kalimat)" \},\
+                "lingkungan": \{ "type": "STRING", "description": "Ide lingkungan pembelajaran (Integrasi ruang fisik, virtual, dan budaya belajar. Contoh: lingkungan sekolah, LMS, dukungan guru untuk keaktifan) yang mendukung topik. (2-3 kalimat)" \},\
+                "digital": \{ "type": "STRING", "description": "Ide pemanfaatan teknologi digital (Menciptakan pembelajaran interaktif, kolaboratif, kontekstual. Contoh: perpertakaan digital, forum daring, penilaian daring) yang relevan dengan topik. (2-3 kalimat)" \}\
+            \},\
+            propertyOrdering: ["peserta_didik", "materi_pelajaran_analisis", "lintas_disiplin", "kemitraan", "lingkungan", "digital"]\
+        \};\
+\
+\
+        function delay(ms) \{\
+            return new Promise(resolve => setTimeout(resolve, ms));\
+        \}\
+\
+        async function fetchWithBackoff(url, options, retries = 3) \{\
+            for (let i = 0; i < retries; i++) \{\
+                try \{\
+                    const response = await fetch(url, options);\
+                    if (!response.ok) \{\
+                        if (response.status === 429 && i < retries - 1) \{\
+                            await delay(Math.pow(2, i) * 1000 + Math.random() * 1000); // Exponential backoff\
+                            continue;\
+                        \}\
+                        throw new Error(`API error: $\{response.statusText\}`);\
+                    \}\
+                    return response.json();\
+                \} catch (error) \{\
+                    if (i === retries - 1) throw error;\
+                    await delay(Math.pow(2, i) * 1000 + Math.random() * 1000);\
+                \}\
+            \}\
+        \}\
+\
+        /**\
+         * Menghasilkan detail desain (Peserta Didik, Materi, Lintas Disiplin, Kemitraan, dll)\
+         */\
+        async function generateDesignDetails(mapel, jenjang, kelas, topik, tujuan) \{\
+            const userQuery = `Buatkan analisis desain pembelajaran untuk Mata Pelajaran: "$\{mapel\}", Jenjang: "$\{jenjang\}/$\{kelas\}", dengan Topik: "$\{topik\}" dan Tujuan Pembelajaran: "$\{tujuan\}". \
+            Berikan analisis singkat untuk 6 bagian: \
+            1. Peserta Didik (analisis kesiapan, minat, kebutuhan belajar), \
+            2. Materi Pelajaran (analisis relevansi, kesulitan, struktur, nilai karakter), \
+            3. Lintas Disiplin (ide singkat 1-2 mapel lain yang relevan),\
+            4. Kemitraan (ide mitra kerjasama: guru lain, orang tua, komunitas, dudi, institusi), \
+            5. Lingkungan (ide lingkungan belajar fisik/virtual/budaya, cth: LMS, lingkungan sekolah), \
+            6. Digital (ide pemanfaatan TIK: perpertakaan digital, forum daring, penilaian daring). \
+            Jaga agar setiap poin ringkas namun informatif, dalam 2-4 kalimat per poin.`;\
+\
+            const payload = \{\
+                contents: [\{ parts: [\{ text: userQuery \}] \}],\
+                generationConfig: \{\
+                    responseMimeType: "application/json",\
+                    responseSchema: DESIGN_SCHEMA,\
+                    temperature: 0.4,\
+                \}\
+            \};\
+\
+            try \{\
+                const responseData = await fetchWithBackoff(apiUrl, \{\
+                    method: 'POST',\
+                    headers: \{ 'Content-Type': 'application/json' \},\
+                    body: JSON.stringify(payload)\
+                \});\
+\
+                const jsonText = responseData.candidates?.[0]?.content?.parts?.[0]?.text;\
+                if (jsonText) \{\
+                    return JSON.parse(jsonText);\
+                \}\
+                // Return error object on empty response\
+                return \{\
+                    peserta_didik: "Gagal memuat analisis peserta didik. (Model mengembalikan respons kosong)",\
+                    materi_pelajaran_analisis: "Gagal memuat analisis materi. (Model mengembalikan respons kosong)",\
+                    lintas_disiplin: "Gagal memuat ide lintas disiplin. (Model mengembalikan respons kosong)",\
+                    kemitraan: "Gagal memuat ide kemitraan. (Model mengembalikan respons kosong)",\
+                    lingkungan: "Gagal memuat ide lingkungan. (Model mengembalikan respons kosong)",\
+                    digital: "Gagal memuat ide pemanfaatan digital. (Model mengembalikan respons kosong)"\
+                \};\
+            \} catch (error) \{\
+                console.error("Error generating design details:", error);\
+                return \{\
+                    peserta_didik: "Gagal memuat analisis peserta didik. Terjadi kesalahan API.",\
+                    materi_pelajaran_analisis: "Gagal memuat analisis materi. Terjadi kesalahan API.",\
+                    lintas_disiplin: "Gagal memuat ide lintas disiplin. Terjadi kesalahan API.",\
+                    kemitraan: "Gagal memuat ide kemitraan. Terjadi kesalahan API.",\
+                    lingkungan: "Gagal memuat ide lingkungan. Terjadi kesalahan API.",\
+                    digital: "Gagal memuat ide pemanfaatan digital. Terjadi kesalahan API."\
+                \};\
+            \}\
+        \}\
+\
+\
+        /**\
+         * Menghasilkan 15 soal (10 PG, 5 Isian)\
+         */\
+        async function generateQuestions(topik, tujuan) \{\
+            const userQuery = `Buatkan 15 (lima belas) soal asesmen sumatif (akhir pembelajaran) beserta kunci jawabannya.\
+            Harus terdiri dari:\
+            - 10 soal Pilihan Ganda (Sertakan opsi A, B, C, D).\
+            - 5 soal Isian Singkat.\
+            \
+            Fokus soal pada pemahaman konsep dan aplikasi, berdasarkan Topik Pembelajaran: "$\{topik\}" dan Tujuan Pembelajaran: "$\{tujuan\}".`;\
+\
+            const payload = \{\
+                contents: [\{ parts: [\{ text: userQuery \}] \}],\
+                generationConfig: \{\
+                    responseMimeType: "application/json",\
+                    responseSchema: QUESTIONS_SCHEMA,\
+                    temperature: 0.5,\
+                \}\
+            \};\
+\
+            try \{\
+                const responseData = await fetchWithBackoff(apiUrl, \{\
+                    method: 'POST',\
+                    headers: \{ 'Content-Type': 'application/json' \},\
+                    body: JSON.stringify(payload)\
+                \});\
+\
+                const jsonText = responseData.candidates?.[0]?.content?.parts?.[0]?.text;\
+                if (jsonText) \{\
+                    return JSON.parse(jsonText);\
+                \}\
+                return [];\
+            \} catch (error) \{\
+                console.error("Error generating questions:", error);\
+                return null; // Mengindikasikan kegagalan\
+            \}\
+        \}\
+\
+        /**\
+         * (DIPERBARUI) Menghasilkan rangkuman materi (Prompt Anti-Tabel)\
+         */\
+        async function generateSummary(mapel, topik) \{\
+             const userQuery = `Buatkan rangkuman materi pelajaran untuk "$\{mapel\}" dengan topik "$\{topik\}".\
+            Fokus pada inti materi. Hindari menjelaskan "perbedaan" kecuali sangat penting.\
+            \
+            - Selalu sertakan "Pengertian" (definisi) dan "Contoh".\
+            - Jika topik ini adalah tentang "Teks" (seperti dalam Bahasa Indonesia), JELASKAN: Pengertian, Tujuan, Jenis, Struktur Teks, dan berikan Contoh singkat.\
+            - Untuk mata pelajaran lain, sesuaikan strukturnya (misal: IPA mungkin butuh Pengertian, Proses/Cara Kerja, Contoh).\
+            \
+            Pastikan tulisan dan tanda bacanya rapi sehingga mudah disunting.\
+            SANGAT PENTING: JANGAN gunakan format tabel markdown. Gunakan paragraf dan poin-poin saja.\
+            PENTING: JANGAN gunakan tanda dolar ($) untuk alasan apapun, termasuk untuk rumus atau penekanan.\
+            JANGAN sertakan header atau judul, langsung mulai dengan materi.`;\
+\
+            const payload = \{\
+                contents: [\{ parts: [\{ text: userQuery \}] \}],\
+                generationConfig: \{\
+                    temperature: 0.3, // Factual summary\
+                \}\
+            \};\
+\
+            try \{\
+                const responseData = await fetchWithBackoff(apiUrl, \{\
+                    method: 'POST',\
+                    headers: \{ 'Content-Type': 'application/json' \},\
+                    body: JSON.stringify(payload)\
+                \});\
+\
+                const text = responseData.candidates?.[0]?.content?.parts?.[0]?.text;\
+                if (text) \{\
+                    return text; // Return raw markdown\
+                \}\
+                return 'Gagal menghasilkan rangkuman materi. (Model mengembalikan respons kosong)';\
+            \} catch (error) \{\
+                console.error("Error generating summary:", error);\
+                return null; // Signals failure\
+            \}\
+        \}\
+\
+        /**\
+         * Menghasilkan ide icebreaker berdasarkan topik (format teks/markdown).\
+         */\
+        async function generateIcebreaker(topic) \{\
+            const userQuery = `Berikan 3 ide icebreaker yang kreatif dan singkat (masing-masing 1-2 kalimat) untuk memulai pelajaran dengan topik "$\{topic\}". \
+            Fokus pada aktivitas yang menyenangkan dan relevan. \
+            Format sebagai daftar bernomor (contoh: 1. ... 2. ...). \
+            JANGAN gunakan bold atau markdown lain, hanya teks biasa dan daftar bernomor.`;\
+\
+            const payload = \{\
+                contents: [\{ parts: [\{ text: userQuery \}] \}],\
+                generationConfig: \{\
+                    temperature: 0.7, // Lebih kreatif for icebreakers\
+                \}\
+            \};\
+\
+            try \{\
+                const responseData = await fetchWithBackoff(apiUrl, \{\
+                    method: 'POST',\
+                    headers: \{ 'Content-Type': 'application/json' \},\
+                    body: JSON.stringify(payload)\
+                \});\
+\
+                const text = responseData.candidates?.[0]?.content?.parts?.[0]?.text;\
+                // Sederhanakan output: ubah daftar bernomor menjadi <li>\
+                if (text) \{\
+                    const htmlList = text.split('\\n')\
+                        .filter(line => line.match(/^\\d+\\./)) // Filter hanya baris yang dimulai dengan "1.", "2.", dll.\
+                        .map(line => `<li>$\{line.replace(/^\\d+\\.\\s*/, '')\}</li>`) // Hapus "1. " dan bungkus dengan <li>\
+                        .join('');\
+                    return `<ol class="list-decimal list-inside space-y-2">$\{htmlList\}</ol>`;\
+                \}\
+                return '<p class="text-red-500 text-sm">Gagal menghasilkan icebreaker. (Model mengembalikan respons kosong)</p>';\
+            \} catch (error) \{\
+                console.error("Error generating icebreaker:", error);\
+                return null; // Signals failure\
+            \}\
+        \}\
+        \
+        /**\
+         * (DIPERBARUI) Menghasilkan draf LKPD Sesuai Jumlah Pertemuan\
+         */\
+        async function generateLKPD(tujuan, topik, jml_pertemuan) \{\
+            const userQuery = `Buatkan draf "Tugas Peserta Didik" (LKPD) yang spesifik untuk $\{jml_pertemuan\} pertemuan pembelajaran, berdasarkan Tujuan Pembelajaran: "$\{tujuan\}" dan Topik: "$\{topik\}".\
+            \
+            Format LKPD harus dipisah per pertemuan dengan jelas.\
+            Contoh Format:\
+            \
+            **PERTEMUAN 1**\
+            1. **Judul Kegiatan:** (Sesuai sub-topik pertemuan 1).\
+            2. **Petunjuk Belajar:** (1-2 kalimat).\
+            3. **Materi/Stimulus:** (Teks/Data/Studi Kasus singkat).\
+            4. **Tugas/Pertanyaan:** (3-4 Soal/Kegiatan).\
+\
+            **PERTEMUAN 2**\
+            (Ulangi struktur di atas untuk pertemuan 2, dst)\
+            \
+            ...dst sampai pertemuan ke-$\{jml_pertemuan\}.\
+\
+            Format sebagai markdown sederhana (bold, list).\
+            JANGAN gunakan tabel.\
+            JANGAN gunakan '##' atau '###' untuk judul, gunakan bold saja.`;\
+\
+            const payload = \{\
+                contents: [\{ parts: [\{ text: userQuery \}] \}],\
+                generationConfig: \{\
+                    temperature: 0.5, // Cukup kreatif untuk aktivitas\
+                \}\
+            \};\
+\
+            try \{\
+                const responseData = await fetchWithBackoff(apiUrl, \{\
+                    method: 'POST',\
+                    headers: \{ 'Content-Type': 'application/json' \},\
+                    body: JSON.stringify(payload)\
+                \});\
+\
+                const text = responseData.candidates?.[0]?.content?.parts?.[0]?.text;\
+                if (text) \{\
+                    return text; // Return raw markdown\
+                \}\
+                return 'Gagal menghasilkan LKPD. (Model mengembalikan respons kosong)';\
+            \} catch (error) \{\
+                console.error("Error generating LKPD:", error);\
+                return null; // Signals failure\
+            \}\
+        \}\
+\
+        /**\
+         * (BARU) Menghasilkan draf rubrik penilaian\
+         */\
+        async function generateRubrics(tujuan, topik, dimensiProfilText) \{\
+            const userQuery = `Buatkan draf rubrik penilaian sederhana untuk 3 (tiga) jenis asesmen, berdasarkan Topik: "$\{topik\}" dan Tujuan: "$\{tujuan\}".\
+\
+            1.  **Rubrik Asesmen Awal (Diagnostik):**\
+                * Fokus pada kesiapan belajar.\
+                * Buat 3 kriteria sederhana (Contoh: 1. Kesiapan Belajar, 2. Pemahaman Konsep Awal).\
+                * Berikan deskripsi singkat untuk "Siap" dan "Perlu Bimbingan".\
+\
+            2.  **Rubrik Asesmen Proses (Formatif - Observasi):**\
+                * Fokus pada observasi selama pembelajaran.\
+                * Gunakan Dimensi Profil Lulusan (DPL) yang dipilih sebagai kriteria.\
+                * DPL yang dipilih adalah: "$\{dimensiProfilText || 'Tidak ada (Gunakan Kolaborasi dan Berpikir Kritis sebagai contoh)'\}".\
+                * Berikan deskripsi singkat untuk "Sangat Berkembang", "Berkembang", "Mulai Berkembang".\
+\
+            3.  **Rubrik Asesmen Sumatif (Akhir - Penilaian Tes/Produk):**\
+                * Fokus pada pencapaian Tujuan Pembelajaran.\
+                * Buat 3-4 kriteria penilaian berdasarkan tujuan: "$\{tujuan\}".\
+                * Berikan deskripsi singkat untuk "Sangat Baik", "Baik", "Cukup".\
+\
+            Format sebagai markdown sederhana (bold, list).\
+            JANGAN gunakan tabel.\
+            JANGAN gunakan '##' atau '###' untuk judul, gunakan bold saja.`;\
+\
+            const payload = \{\
+                contents: [\{ parts: [\{ text: userQuery \}] \}],\
+                generationConfig: \{\
+                    temperature: 0.5,\
+                \}\
+            \};\
+\
+            try \{\
+                const responseData = await fetchWithBackoff(apiUrl, \{\
+                    method: 'POST',\
+                    headers: \{ 'Content-Type': 'application/json' \},\
+                    body: JSON.stringify(payload)\
+                \});\
+\
+                const text = responseData.candidates?.[0]?.content?.parts?.[0]?.text;\
+                if (text) \{\
+                    return text; // Return raw markdown\
+                \}\
+                return 'Gagal menghasilkan rubrik. (Model mengembalikan respons kosong)';\
+            \} catch (error) \{\
+                console.error("Error generating rubrics:", error);\
+                return null; // Signals failure\
+            \}\
+        \}\
+\
+        \
+        <!-- ======================================================================= -->\
+        <!-- II. FUNGSI HELPER SINKRON (LOKAL) -->\
+        <!-- (DIKEMBALIKAN KARENA HILANG) -->\
+        <!-- ======================================================================= -->\
+        \
+        <!-- Utility function untuk loading spinner -->\
+        function getLoadingHTML(text) \{\
+            return `<div class="loading-text"><span class="spinner spinner-dark"></span>$\{text\}</div>`;\
+        \}\
+\
+        /**\
+         * Mengkalkulasi total waktu dari string durasi dan jumlah pertemuan\
+         */\
+        function calculateTotalTime(durasi, jml_pertemuan) \{\
+            let menitPerPertemuan = 0;\
+            const match = durasi.match(/(\\d+)\\s*x\\s*(\\d+)/); // Mencari pola "N x M"\
+            if (match) \{\
+                menitPerPertemuan = parseInt(match[1], 10) * parseInt(match[2], 10);\
+            \} else \{\
+                const singleMatch = durasi.match(/(\\d+)/);\
+                if (singleMatch) \{\
+                    menitPerPertemuan = parseInt(singleMatch[1], 10);\
+                \}\
+            \}\
+\
+            if (menitPerPertemuan > 0) \{\
+                const totalMenit = menitPerPertemuan * jml_pertemuan;\
+                const totalJP = totalMenit / 45; // Asumsi 1 JP = 45 menit\
+                if (totalJP === Math.floor(totalJP)) \{\
+                    return `$\{totalMenit\} menit (Setara $\{totalJP\} JP)`;\
+                \}\
+                return `$\{totalMenit\} menit`;\
+            \}\
+            return `$\{jml_pertemuan\} x ($\{durasi\})`;\
+        \}\
+\
+        /**\
+         * (DIPERBARUI) Menambahkan prinsip pembelajaran ke INTI & Looping Pertemuan\
+         */\
+        function generateMeetingBreakdown(model, topik, materi, tujuan, jml_pertemuan) \{\
+            let intiMemahami = '';\
+            let intiMengaplikasi = '';\
+            let intiMerefleksi = '';\
+\
+            // Tentukan konten Inti berdasarkan Model\
+            switch (model) \{\
+                case 'pbl':\
+                    intiMemahami = `\
+                        <ol class="list-decimal list-inside space-y-2 pl-4 text-gray-700 text-sm">\
+                            <li><strong>Orientasi Masalah:</strong> Guru menyajikan masalah nyata (studi kasus, video, artikel) terkait "$\{topik\}" untuk diamati siswa.</li>\
+                            <li><strong>Identifikasi Masalah:</strong> Siswa (dibimbing guru) mengidentifikasi dan merumuskan pertanyaan/masalah kunci dari stimulus yang diberikan.</li>\
+                        </ol>\
+                    `;\
+                    intiMengaplikasi = `\
+                        <ol class="list-decimal list-inside space-y-2 pl-4 text-gray-700 text-sm">\
+                            <li><strong>Mengorganisasi Siswa:</strong> Siswa dibagi dalam kelompok untuk mendiskusikan masalah.</li>\
+                            <li><strong>Membimbing Penyelidikan:</strong> Siswa (berkelompok) mengumpulkan informasi/data (studi literatur, observasi, wawancara sederhana) untuk menjawab rumusan masalah. Guru berperan sebagai fasilitator (Diferensiasi Proses).</li>\
+                        </ol>\
+                    `;\
+                    intiMerefleksi = `\
+                        <ol class="list-decimal list-inside space-y-2 pl-4 text-gray-700 text-sm">\
+                            <li><strong>Mengembangkan Hasil Karya:</strong> Siswa menyusun laporan/presentasi/solusi atas masalah yang ditemukan.</li>\
+                            <li><strong>Menganalisisis & Evaluasi:</strong> Setiap kelompok mempresentasikan hasilnya. Kelompok lain memberikan tanggapan. Guru memandu proses evaluasi dan klarifikasi konsep.</li>\
+                        </ol>\
+                    `;\
+                    break;\
+                case 'pjbl':\
+                    intiMemahami = `\
+                        <ol class="list-decimal list-inside space-y-2 pl-4 text-gray-700 text-sm">\
+                            <li><strong>Pertanyaan Mendasar:</strong> Guru mengajukan pertanyaan esensial (Challenging Question) terkait "$\{topik\}" yang akan dijawab melalui sebuah proyek.</li>\
+                            <li><strong>Menyusun Perencanaan Proyek:</strong> Siswa (berkelompok) merancang langkah-langkah, menentukan alat/bahan, dan menyepakati aturan pengerjaan proyek.</li>\
+                        </ol>\
+                    `;\
+                    intiMengaplikasi = `\
+                        <ol class="list-decimal list-inside space-y-2 pl-4 text-gray-700 text-sm">\
+                            <li><strong>Menyusun Jadwal:</strong> Siswa dan guru menyepakati timeline pengerjaan proyek.</li>\
+                            <li><strong>Memonitor Kemajuan:</strong> Guru memantau aktivitas siswa selama proses pengerjaan proyek dan memberikan bimbingan (Asesmen Formatif Proses).</li>\
+                            <li><strong>Menguji Hasil:</strong> Siswa melakukan uji coba atau finalisasi produk/hasil proyek mereka.</li>\
+                        </ol>\
+                    `;\
+                    intiMerefleksi = `\
+                        <ol class="list-decimal list-inside space-y-2 pl-4 text-gray-700 text-sm">\
+                            <li><strong>Presentasi & Evaluasi:</strong> Setiap kelompok mempresentasikan hasil proyeknya. Guru dan siswa lain memberikan umpan balik.</li>\
+                            <li><strong>Refleksi Pengalaman:</strong> Siswa merefleksikan pengalaman belajar, tantangan, dan hal baru yang dipelajari selama proyek.</li>\
+                        </ol>\
+                    `;\
+                    break;\
+                case 'inkuiri':\
+                case 'discovery':\
+                    intiMemahami = `\
+                        <ol class="list-decimal list-inside space-y-2 pl-4 text-gray-700 text-sm">\
+                            <li><strong>Stimulasi (Pemberian Rangsangan):</strong> Guru memberikan stimulus (gambar, video, demonstrasi) terkait "$\{topik\}" untuk memancing rasa ingin tahu.</li>\
+                            <li><strong>Identifikasi Masalah:</strong> Siswa merumuskan pertanyaan/hipotesis berdasarkan stimulus.</li>\
+                        </ol>\
+                    `;\
+                    intiMengaplikasi = `\
+                        <ol class="list-decimal list-inside space-y-2 pl-4 text-gray-700 text-sm">\
+                            <li><strong>Pengumpulan Data:</strong> Siswa (berkelompok atau individu) mengumpulkan data melalui eksperimen, studi literatur, atau observasi untuk menjawab pertanyaan.</li>\
+                            <li><strong>Pengolahan Data:</strong> Siswa menganalisis dan mengolah data yang telah dikumpulkan.</li>\
+                        </ol>\
+                    `;\
+                    intiMerefleksi = `\
+                        <ol class="list-decimal list-inside space-y-2 pl-4 text-gray-700 text-sm">\
+                            <li><strong>Verifikasi (Pembuktian):</strong> Siswa membandingkan hasil olah data dengan hipotesis awal atau teori yang ada.</li>\
+                            <li><strong>Generalisasi (Menarik Kesimpulan):</strong> Siswa (dibimbing guru) merumuskan kesimpulan umum berdasarkan hasil verifikasi.</li>\
+                        </ol>\
+                    `;\
+                    break;\
+                case 'direct':\
+                    intiMemahami = `\
+                        <ol class="list-decimal list-inside space-y-2 pl-4 text-gray-700 text-sm">\
+                            <li><strong>Penyampaian Tujuan & Materi:</strong> Guru menjelaskan tujuan pembelajaran dan mempresentasikan materi "$\{materi\}" secara terstruktur (ceramah, demonstrasi).</li>\
+                            <li><strong>Demonstrasi Konsep:</strong> Guru memberikan contoh nyata atau mendemonstrasikan penerapan konsep/keterampilan.</li>\
+                        </ol>\
+                    `;\
+                    intiMengaplikasi = `\
+                        <ol class="list-decimal list-inside space-y-2 pl-4 text-gray-700 text-sm">\
+                            <li><strong>Latihan Terbimbing:</strong> Siswa mengerjakan soal/tugas dengan bimbingan langsung dari guru. Guru memberikan umpan balik korektif secara instan.</li>\
+                            <li><strong>Pengecekan Pemahaman:</strong> Guru memastikan siswa telahahami konsep dasar sebelum melanjutkan.</li>\
+                        </ol>\
+                    `;\
+                    intiMerefleksi = `\
+                        <ol class="list-decimal list-inside space-y-2 pl-4 text-gray-700 text-sm">\
+                            <li><strong>Latihan Mandiri:</strong> Siswa mengerjakan latihan secara individu untuk menguji pemahaman dan keterampilan (Asesmen Formatif).</li>\
+                            <li><strong>Umpan Balik & Penguatan:</strong> Guru dan siswa membahas hasil latihan mandiri, memberikan penguatan pada materi yang masih sulit.</li>\
+                        </ol>\
+                    `;\
+                    break;\
+                default: // Kontekstual atau default\
+                    intiMemahami = `\
+                        <ol class="list-decimal list-inside space-y-2 pl-4 text-gray-700 text-sm">\
+                            <li><strong>Konstruktivisme (Membangun Pemahaman):</strong> Siswa diajak mengaitkan pengetahuan awal mereka dengan materi baru ("$\{materi\}") melalui diskusi awal.</li>\
+                            <li><strong>Menemukan (Inquiry):</strong> Guru memfasilitasi siswa untuk menemukan konsep utama materi melalui data/fakta di lingkungan sekitar.</li>\
+                        </ol>\
+                    `;\
+                    intiMengaplikasi = `\
+                        <ol class="list-decimal list-inside space-y-2 pl-4 text-gray-700 text-sm">\
+                            <li><strong>Bertanya (Questioning):</strong> Mendorong siswa untuk aktif bertanya mengenai fenomena terkait "$\{topik\}".</li>\
+                            <li><strong>Masyarakat Belajar (Learning Community):</strong> Siswa berdiskusi dalam kelompok untuk memecahkan masalah kontekstual yang diberikan guru.</li>\
+                        </ol>\
+                    `;\
+                    intiMerefleksi = `\
+                        <ol class="list-decimal list-inside space-y-2 pl-4 text-gray-700 text-sm">\
+                            <li><strong>Pemodelan (Modeling):</strong> Guru atau siswa (yang sudah mampu) memberikan contoh penerapan konsep.</li>\
+                            <li><strong>Refleksi (Reflection) & Penilaian Otentik:</strong> Siswa merefleksikan proses belajar dan guru menilai kemampuan siswa dalam konteks nyata (misal: presentasi solusi).</li>\
+                        </ol>\
+                    `;\
+            \}\
+            \
+            // Loop untuk menghasilkan rincian per pertemuan\
+            let fullHTML = '<div class="space-y-8">';\
+            \
+            for (let i = 1; i <= jml_pertemuan; i++) \{\
+                let awal = `\
+                    <ol class="list-decimal list-inside space-y-2 pl-4 text-gray-700 text-sm">\
+                        <li><strong>Orientasi:</strong> Guru membuka pelajaran dengan salam, doa, dan memeriksa kehadiran.</li>\
+                        <li><strong>Apersepsi:</strong> Mengaitkan materi Pertemuan $\{i\} dengan pengetahuan sebelumnya.</li>\
+                        <li><strong>Motivasi:</strong> Menyampaikan tujuan pembelajaran Pertemuan $\{i\}.</li>\
+                    </ol>\
+                `;\
+                \
+                let penutup = `\
+                    <ol class="list-decimal list-inside space-y-2 pl-4 text-gray-700 text-sm">\
+                        <li><strong>Kesimpulan:</strong> Siswa menyimpulkan materi Pertemuan $\{i\}.</li>\
+                        <li><strong>Refleksi:</strong> Guru dan siswa melakukan refleksi terhadap kegiatan Pertemuan $\{i\}.</li>\
+                        <li><strong>Penutup:</strong> Doa dan salam.</li>\
+                    </ol>\
+                `;\
+\
+                fullHTML += `\
+                <div class="meeting-block border-b-4 border-indigo-200 pb-8 mb-8">\
+                    <h4 class="meeting-header font-bold text-lg text-white bg-indigo-600 p-2 rounded mb-4 pl-4 uppercase">PERTEMUAN KE-$\{i\}</h4>\
+                    <div class="space-y-6">\
+                        <!-- AWAL -->\
+                        <div class="border border-gray-300 rounded-lg overflow-hidden">\
+                            <h4 class="font-bold text-lg bg-gray-100 p-3 text-gray-800">KEGIATAN AWAL (10-15 Menit)</h4>\
+                            <div class="p-4">$\{awal\}</div>\
+                        </div>\
+                        \
+                        <!-- INTI -->\
+                        <div class="border border-gray-300 rounded-lg overflow-hidden">\
+                            <h4 class="font-bold text-lg bg-gray-100 p-3 text-gray-800">KEGIATAN INTI (60-70 Menit)</h4>\
+                            <div class="p-4 space-y-5">\
+                                <p class="text-sm text-gray-600 italic">Menerapkan model pembelajaran $\{model.toUpperCase()\}.</p>\
+                                \
+                                <div>\
+                                    <h5 class="font-semibold text-base text-indigo-700 mb-2">1. Fase Pemahaman Konsep</h5>\
+                                    $\{intiMemahami\}\
+                                </div>\
+                                \
+                                <div>\
+                                    <h5 class="font-semibold text-base text-indigo-700 mb-2">2. Fase Aplikasi/Penyelidikan</h5>\
+                                    $\{intiMengaplikasi\}\
+                                </div>\
+\
+                                <div>\
+                                    <h5 class="font-semibold text-base text-indigo-700 mb-2">3. Fase Refleksi/Evaluasi</h5>\
+                                    $\{intiMerefleksi\}\
+                                </div>\
+                            </div>\
+                        </div>\
+\
+                        <!-- PENUTUP -->\
+                        <div class="border border-gray-300 rounded-lg overflow-hidden">\
+                            <h4 class="font-bold text-lg bg-gray-100 p-3 text-gray-800">KEGIATAN PENUTUP (10-15 Menit)</h4>\
+                            <div class="p-4">$\{penutup\}</div>\
+                        </div>\
+                    </div>\
+                </div>`;\
+            \}\
+            \
+            fullHTML += '</div>';\
+            return fullHTML;\
+        \}\
+\
+        /**\
+         * (DIPERBARUI) Mengganti judul 20 soal menjadi 15 soal\
+         */\
+        function generateAsesmenDetail(type, topik, materi, questions) \{\
+            if (type === 'awal') \{\
+                return `\
+                    <p class="text-sm text-gray-700">Dilakukan sebelum pembelajaran untuk mengetahui kesiapan siswa.</p>\
+                    <ul class="list-disc list-inside text-sm space-y-1 mt-2 pl-4 text-gray-600">\
+                        <li><strong>Non-Kognitif:</strong> Menanyakan minat dan gaya belajar siswa terkait topik "$\{topik\}". (Teknik: Angket sederhana/Tanya jawab).</li>\
+                        <li><strong>Kognitif:</strong> Memberikan 2-3 pertanyaan kunci terkait konsep dasar "$\{materi\}" untuk memetakan pemahaman awal. (Contoh: "Apa yang kamu ketahui tentang $\{topik\}?")</li>\
+                    </ul>\
+                `;\
+            \} else if (type === 'proses') \{\
+                return `\
+                    <p class="text-sm text-gray-700">Dilakukan selama proses pembelajaran untuk memantau kemajuan (Assessment for Learning).</p>\
+                    <ul class="list-disc list-inside text-sm space-y-1 mt-2 pl-4 text-gray-600">\
+                        <li><strong>Observasi:</strong> Mengamati keaktifan siswa saat diskusi kelompok dan presentasi (terkait dimensi profil yang dipilih).</li>\
+                        <li><strong>Refleksi Cepat (Exit Ticket):</strong> Di akhir sesi, siswa menulis 1 hal baru yang dipelajari dan 1 hal yang masih membingungkan.</li>\
+                        <li><strong>Penilaian Kinerja:</strong> Menilai kualitas argumen atau hasil diskusi/penyelidikan kelompok.</li>\
+                        <li><strong>Peer/Self Assessment:</strong> Siswa saling menilai kontribusi rekan satu kelompok.</li>\
+                    </ul>\
+                `;\
+            \} else if (type === 'sumatif') \{\
+                let questionListHtml = '';\
+                if (questions && questions.length > 0) \{\
+                    questionListHtml = `\
+                        <h5 class="font-bold text-base text-indigo-700 mt-5 mb-2 border-t pt-3">DRAFT 15 SOAL (10 PG, 5 Isian) 
+\f1 \uc0\u10024 
+\f0  (Dibuat oleh AI)</h5>\
+                        <ol class="list-decimal list-inside space-y-3 pl-2 text-sm">\
+                            $\{questions.map((q, index) => `\
+                            <li class="mb-2">\
+                                <p class="font-semibold text-gray-800">($\{index + 1\}) $\{q.question.replace(/\\n/g, '<br>')\}</p>\
+                                <p class="text-green-700 pl-4"><strong>Jawaban:</strong> $\{q.answer\}</p>\
+                            </li>\
+                        `).join('')\}\
+                        </ol>\
+                    `;\
+                \} else \{\
+                    questionListHtml = '<p class="text-sm mt-4 italic">Soal sedang dibuat...</p>'; // Placeholder for loading\
+                    if (questions === null) \{ // Check for explicit failure\
+                        questionListHtml = '<p class="text-sm mt-4 italic text-red-500">Gagal membuat soal. Coba lagi.</p>';\
+                    \}\
+                \}\
+                return `\
+                    <p class="text-sm text-gray-700">Dilakukan pada akhir unit pembelajaran untuk mengukur pencapaian keseluruhan tujuan (Assessment of Learning).\
+                    <br><strong>Teknik:</strong> Tes Tertulis (10 Pilihan Ganda, 5 Isian Singkat), Penilaian Proyek/Produk (jika relevan).\
+                    <br><strong>Fokus:</strong> Pemahaman konsep, analisis, dan aplikasi materi "$\{materi\}" terkait "$\{topik\}".</p>\
+                    $\{questionListHtml\}\
+                `;\
+            \}\
+        \}\
+\
+        /**\
+         * Mengubah Markdown sederhana (bold, italic, list) menjadi HTML\
+         */\
+        function markdownToHtml(text) \{\
+            if (!text) return '<p></p>';\
+\
+            let html = text\
+                .replace(/^##\\s*(.*?)$/gm, '<h5 class="font-semibold text-lg mt-3 mb-2">$1</h5>') // Ganti ## dengan H5\
+                .replace(/^###\\s*(.*?)$/gm, '<h6 class="font-semibold text-base mt-2 mb-1">$1</h6>') // Ganti ### dengan H6\
+                .replace(/\\*\\*(.*?)\\*\\*/g, '<strong>$1</strong>') // Bold\
+                .replace(/\\*(.*?)\\*/g, '<em>$1</em>');     // Italic\
+\
+            return html.split('\\n\\n') // Pisah paragraf\
+                .map(paragraph => \{\
+                    if (paragraph.trim().length === 0) return '';\
+                    \
+                    // Cek jika sudah di-format sbg heading\
+                    if (paragraph.trim().startsWith('<h5') || paragraph.trim().startsWith('<h6')) \{\
+                        return paragraph; // Kembalikan heading apa adanya\
+                    \}\
+\
+                    // Cek apakah ini daftar\
+                    const lines = paragraph.split('\\n');\
+                    if (lines.length > 1 && /^\\s*[\\d+\\.\\-\\*]/.test(lines[0].trim())) \{\
+                        const isOrdered = /^\\s*\\d+\\./.test(lines[0].trim());\
+                        const listTag = isOrdered ? 'ol' : 'ul';\
+                        const listClass = isOrdered ? 'list-decimal' : 'ul';\
+                        \
+                        const items = lines.map(line => \{\
+                            // Pastikan tidak memproses ulang markdown\
+                            const itemContent = line.replace(/^\\s*[\\d+\\.\\-\\*]\\s*/, '');\
+                            return `<li>$\{itemContent\}</li>`; // itemContent sudah di-format bold/italic\
+                        \}).join('');\
+                        \
+                        return `<$\{listTag\} class="$\{listClass\} list-inside space-y-1">$\{items\}</$\{listTag\}>`;\
+                    \}\
+                    \
+                    // Jika bukan daftar atau heading, jadikan paragraf\
+                    return `<p>$\{paragraph.replace(/\\n/g, '<br>')\}</p>`;\
+                \})\
+                .join('');\
+        \}\
+\
+\
+        <!-- ======================================================================= -->\
+        <!-- III. GENERATE FULL HTML OUTPUT (Struktur BARU DIPINDAN) -->\
+        <!-- ======================================================================= -->\
+        function generateFullOutputHTML(data, calculatedTimeString, meetingBreakdownHTML, displayDimensi, asesmenAwalDetail, asesmenProsesDetail, asesmenSumatifDetail, summaryHTML, icebreakerHTML, lkpdHTML, rubricsHTML) \{\
+             return `\
+                <div class="space-y-8">\
+                    <!-- Bagian A: Informasi Umum --><div class="p-6 bg-indigo-50 rounded-xl border border-indigo-200">\
+                        <h3 class="font-bold text-xl text-indigo-700 mb-4">A. INFORMASI UMUM</h3>\
+                        <div class="grid md:grid-cols-2 lg:grid-cols-3 grid-cols-1 text-base gap-x-6 gap-y-3 text-gray-700">\
+                            <p><strong>Mata Pelajaran:</strong> $\{data.mapel\}</p>\
+                            <p><strong>Jenjang:</strong> $\{data.jenjang\}</p>\
+                            <p><strong>Kelas:</strong> $\{data.kelas\}</p>\
+                            <p><strong>Semester:</strong> $\{data.semester\}</p>\
+                            <p><strong>Jumlah Pertemuan:</strong> $\{data.jml_pertemuan\}</p>\
+                            <p><strong>Alokasi Waktu:</strong> $\{calculatedTimeString\}</p>\
+                        </div>\
+                    </div>\
+\
+                    <!-- Bagian B: Identifikasi --><div>\
+                        <h3 class="font-bold text-xl text-indigo-700 mb-4 border-b border-indigo-200 pb-1">B. IDENTIFIKASI</h3>\
+                        <div class="text-gray-700 space-y-3 text-base">\
+                             <div>\
+                                <p class="font-semibold mb-1">Peserta Didik:</p>\
+                                <div class="text-sm pl-4 text-gray-600">$\{data.peserta_didik.replace(/\\n/g, '<br>')\}</div>\
+                            </div>\
+                            <div>\
+                                <p class="font-semibold mb-1">Materi Pelajaran (Analisis):</p>\
+                                <div class="text-sm pl-4 text-gray-600">$\{data.materi_pelajaran_analisis.replace(/\\n/g, '<br>')\}</div>\
+                            </div>\
+                            <div>\
+                                <p class="font-semibold mb-1">Dimensi Profil Lulusan:</p>\
+                                <div class="text-sm pl-4 text-indigo-600">$\{displayDimensi\}</div>\
+                            </div>\
+                        </div>\
+                    </div>\
+                    \
+                    <!-- Bagian C: Desain Pembelajaran --><div>\
+                        <h3 class="font-bold text-xl text-indigo-700 mb-4 border-b border-indigo-200 pb-1">C. DESAIN PEMBELAJARAN</h3>\
+                        <div class="text-gray-700 space-y-3 text-base">\
+                             <div>\
+                                <p class="font-semibold mb-1">Capaian Pembelajaran:</p>\
+                                <div class="text-sm pl-4 text-gray-600">$\{data.capaian_pembelajaran.replace(/\\n/g, '<br>')\}</div>\
+                            </div>\
+                             <div>\
+                                <p class="font-semibold mb-1">Lintas Disiplin Ilmu:</p>\
+                                <div class="text-sm pl-4 text-gray-600">$\{data.lintas_disiplin\}</div>\
+                            </div>\
+                            <div>\
+                                <p class="font-semibold mb-1">Tujuan Pembelajaran:</p>\
+                                <div class="text-sm pl-4 text-gray-600">$\{data.tujuan_pembelajaran.replace(/\\n/g, '<br>')\}</div>\
+                            </div>\
+                            <div>\
+                                <p class="font-semibold mb-1">Topik Pembelajaran:</p>\
+                                <div class="text-sm pl-4 text-gray-600">$\{data.topik_pembelajaran\}</div>\
+                            </div>\
+                            <div>\
+                                <p class="font-semibold mb-1">Praktik Pedagogis (Model):</p>\
+                                <div class="text-sm pl-4 text-gray-600">$\{data.praktik_pedagogis_text\}</div>\
+                            </div>\
+                            <div>\
+                                <p class="font-semibold mb-1">Kemitraan Pembelajaran:</p>\
+                                <div class="text-sm pl-4 text-gray-600">$\{data.kemitraan.replace(/\\n/g, '<br>')\}</div>\
+                            </div>\
+                            <div>\
+                                <p class="font-semibold mb-1">Lingkungan Pembelajaran:</p>\
+                                <div class="text-sm pl-4 text-gray-600">$\{data.lingkungan.replace(/\\n/g, '<br>')\}</div>\
+                            </div>\
+                            <div>\
+                                <p class="font-semibold mb-1">Pemanfaatan Digital:</p>\
+                                <div class="text-sm pl-4 text-gray-600">$\{data.digital.replace(/\\n/g, '<br>')\}</div>\
+                            </div>\
+                        </div>\
+                    </div>\
+                    \
+                    <!-- Bagian D: Langkah-Langkah --><div>\
+                        <h3 class="font-bold text-xl text-indigo-700 mb-3 border-b border-indigo-200 pb-1">D. PENGALAMAN BELAJAR (LANGKAH-LANGKAH PELAJARAN)</h3>\
+                        $\{meetingBreakdownHTML\}\
+                    </div>\
+\
+                    <!-- Bagian E: Asesmen --><div>\
+                        <h3 class="font-bold text-xl text-indigo-700 mb-3 border-b border-indigo-200 pb-1">E. ASESMEN PEMBELAJARAN</h3>\
+                        <p class="text-sm text-gray-600 italic mb-4">Asesmen disesuaikan dengan Assessment as, for, dan of Learning. Metode yang digunakan komprehensif untuk mengukur pencapaian kompetensi.</p>\
+                        \
+                        <div class="space-y-4 mt-4 text-base text-gray-700">\
+                            <div class="p-4 bg-red-50 border border-red-200 rounded-lg">\
+                                <p class="font-semibold text-red-700 mb-1">1. Asesmen pada Awal Pembelajaran (Diagnostik)</p>\
+                                $\{asesmenAwalDetail\}\
+                            </div>\
+                            <div class="p-4 bg-purple-50 border border-purple-200 rounded-lg">\
+                                <p class="font-semibold text-purple-700 mb-1">2. Asesmen pada Proses Pembelajaran (Formatif)</p>\
+                                $\{asesmenProsesDetail\}\
+                            </div>\
+                            <div id="sumatif-section" class="p-4 bg-orange-50 border border-orange-200 rounded-lg">\
+                                <p class="font-semibold text-orange-700 mb-1">3. Asesmen pada Akhir Pembelajaran (Sumatif)</p>\
+                                $\{asesmenSumatifDetail\}\
+                            </div>\
+                        </div>\
+\
+                        <!-- (BARU) Sisipkan Rubrik di sini, masih di dalam Bagian E -->\
+                        <div class="mt-6 border-t border-gray-300 pt-4">\
+                            <h4 class="font-bold text-lg text-indigo-700 mb-3">Draf Rubrik Penilaian</h4>\
+                            <div class="text-gray-700 space-y-3 text-sm">\
+                                $\{rubricsHTML\}\
+                            </div>\
+                        </div>\
+                    </div>\
+\
+                    <!-- Bagian F: RANGKUMAN MATERI (Judul BARU, asalnya D) --><div class="border-t pt-6 border-gray-200">\
+                        <h3 class="font-bold text-xl text-indigo-700 mb-3 border-b border-indigo-200 pb-1">F. LAMPIRAN 1: RANGKUMAN MATERI</h3>\
+                        <div class="text-gray-700 space-y-3">\
+                            $\{summaryHTML\}\
+                        </div>\
+                    </div>\
+\
+                    <!-- Bagian G: IDE ICEBREAKER (Judul BARU, asalnya E) --><div class="border-t pt-6 border-gray-200">\
+                        <h3 class="font-bold text-xl text-indigo-700 mb-3 border-b border-indigo-200 pb-1">G. LAMPIRAN 2: IDE ICEBREAKER</h3>\
+                        <div class="text-gray-700">\
+                            $\{icebreakerHTML\}\
+                        </div>\
+                    </div>\
+                    \
+                    <!-- (BARU) Bagian H: LAMPIRAN LKPD -->\
+                    $\{lkpdHTML ? `\
+                    <div class="border-t pt-6 border-gray-200">\
+                        <h3 class="font-bold text-xl text-indigo-700 mb-3 border-b border-indigo-200 pb-1">H. LAMPIRAN 3: DRAFT LKPD</h3>\
+                        <div class="text-gray-700 space-y-3">\
+                            $\{lkpdHTML\}\
+                        </div>\
+                    </div>\
+                    ` : ''\}\
+\
+                </div>\
+            `;\
+        \}\
+\
+        <!-- ======================================================================= -->\
+        <!-- V. FUNGSI UTAMA GENERATEPLAN (ASYNC) -->\
+        <!-- ======================================================================= -->\
+        async function generatePlan() \{\
+            document.getElementById('generate-button').disabled = true;\
+            document.getElementById('generate-button-text').innerHTML = `<span class="spinner"></span>Menganalisis Desain, Rangkuman, Soal, & Icebreaker...`;\
+            \
+            <!-- 1. Ambil Semua Nilai Input (Struktur BARU) -->\
+            const praktikCheckboxes = document.querySelectorAll('input[name="praktik_pedagogis"]:checked');\
+            const praktikValues = Array.from(praktikCheckboxes).map(cb => cb.labels[0].innerText);\
+            const praktikValuesInternal = Array.from(praktikCheckboxes).map(cb => cb.value);\
+            \
+            const butuhLKPD = document.querySelector('input[name="butuh_lkpd"]:checked').value;\
+\
+            <!-- (BARU) Ambil teks dimensi profil untuk prompt rubrik -->\
+            const dimensiCheckboxes = document.querySelectorAll('input[name="dimensi_profil"]:checked');\
+            const dimensiText = Array.from(dimensiCheckboxes).map(cb => cb.labels[0].innerText).join(', ');\
+\
+            const data = \{\
+                <!-- Info Umum (Input Pengguna) -->\
+                mapel: document.getElementById('mapel').value,\
+                jenjang: document.getElementById('jenjang').value,\
+                kelas: document.getElementById('kelas').value,\
+                semester: document.getElementById('semester').value,\
+                jml_pertemuan: parseInt(document.getElementById('jml_pertemuan').value, 10),\
+                durasi: document.getElementById('durasi').value,\
+                \
+                <!-- Identifikasi (Input Pengguna) -->\
+                dimensi_profil: Array.from(dimensiCheckboxes).map(cb => cb.value),\
+                \
+                <!-- Desain Pembelajaran (Input Pengguna) -->\
+                capaian_pembelajaran: document.getElementById('capaian_pembelajaran').value,\
+                tujuan_pembelajaran: document.getElementById('tujuan_pembelajaran').value,\
+                topik_pembelajaran: document.getElementById('topik_pembelajaran').value,\
+                \
+                praktik_pedagogis_text: praktikValues.length > 0 ? praktikValues.join(', ') : 'Tidak ada yang dipilih',\
+                praktik_pedagogis_internal_value: praktikValuesInternal.length > 0 ? praktikValuesInternal[0] : 'kontekstual', <!-- Ambil yg pertama untuk sintaks langkah -->\
+            \};\
+\
+            const displayDimensi = dimensiText.length > 0 ? dimensiText : 'Tidak ada yang dipilih';\
+\
+            <!-- 1.b. Kalkulasi Waktu -->\
+            const calculatedTimeString = calculateTotalTime(data.durasi, data.jml_pertemuan);\
+\
+            <!-- 1.c. Generate Rincian Pertemuan (Berdasarkan Model) -->\
+            const meetingBreakdownHTML = generateMeetingBreakdown(\
+                data.praktik_pedagogis_internal_value, \
+                data.topik_pembelajaran, \
+                data.topik_pembelajaran, <!-- Menggunakan topik sebagai konteks materi -->\
+                data.tujuan_pembelajaran,\
+                data.jml_pertemuan // PASSING JUMLAH PERTEMUAN KE FUNGSI\
+            );\
+            \
+            <!-- 1.d. Generate Detail Asesmen (Statis) -->\
+            const asesmenAwalDetail = generateAsesmenDetail('awal', data.topik_pembelajaran, data.topik_pembelajaran);\
+            const asesmenProsesDetail = generateAsesmenDetail('proses', data.topik_pembelajaran, data.topik_pembelajaran);\
+\
+            <!-- 1.e. Siapkan Placeholder untuk Konten Dinamis (AI) -->\
+            const loadingSpinner = getLoadingHTML("Sedang memuat...");\
+            const loadingQuestions = getLoadingHTML("Sedang membuat 15 soal asesmen (10 PG, 5 Isian)...");\
+            const summaryLoading = getLoadingHTML("Sedang membuat rangkuman materi...");\
+            const icebreakerLoading = getLoadingHTML("Sedang membuat ide icebreaker...");\
+            const lkpdLoading = butuhLKPD === 'ya' ? getLoadingHTML("Sedang membuat draf LKPD...") : ''; <!-- (BARU) -->\
+            const rubricsLoading = getLoadingHTML("Sedang membuat draf rubrik penilaian..."); <!-- (BARU) -->\
+\
+            \
+            let asesmenSumatifDetailPlaceholder = generateAsesmenDetail('sumatif', data.topik_pembelajaran, data.topik_pembelajaran, []); \
+            asesmenSumatifDetailPlaceholder = asesmenSumatifDetailPlaceholder.replace('<p class="text-sm mt-4 italic">Soal sedang dibuat...</p>', loadingQuestions);\
+\
+            <!-- 1.f. Buat objek data placeholder untuk tampilan awal -->\
+            const placeholderData = \{\
+                ...data,\
+                <!-- AI Generated Fields -->\
+                peserta_didik: loadingSpinner,\
+                materi_pelajaran_analisis: loadingSpinner,\
+                lintas_disiplin: loadingSpinner,\
+                kemitraan: loadingSpinner,\
+                lingkungan: loadingSpinner,\
+                digital: loadingSpinner\
+            \};\
+\
+            <!-- 2. Tampilkan Output Awal (dengan Loading Spinners) -->\
+            let outputHTML = generateFullOutputHTML(\
+                placeholderData, \
+                calculatedTimeString, \
+                meetingBreakdownHTML, \
+                displayDimensi, \
+                asesmenAwalDetail, \
+                asesmenProsesDetail, \
+                asesmenSumatifDetailPlaceholder, \
+                summaryLoading, \
+                icebreakerLoading,\
+                lkpdLoading, <!-- (BARU) -->\
+                rubricsLoading <!-- (BARU) -->\
+            );\
+\
+            document.getElementById('plan-output').innerHTML = outputHTML;\
+            document.getElementById('result-container').classList.remove('hidden');\
+            document.getElementById('result-container').scrollIntoView(\{ behavior: 'smooth' \});\
+            \
+            <!-- 3. Panggil API Calls Concurrently (Rangkuman, Soal, Icebreaker, Detail Desain, LKPD) -->\
+            \
+            <!-- (BARU) Siapkan promise LKPD secara kondisional -->\
+            let lkpdPromise = Promise.resolve(null);\
+            if (butuhLKPD === 'ya') \{\
+                lkpdPromise = generateLKPD(data.tujuan_pembelajaran, data.topik_pembelajaran, data.jml_pertemuan); // PASSING JUMLAH PERTEMUAN\
+            \}\
+\
+            const [\
+                generatedSummaryMarkdown, \
+                generatedQuestions, \
+                generatedIcebreaker,\
+                generatedDesignDetails,\
+                generatedLKPD, <!-- (BARU) -->\
+                generatedRubricsMarkdown <!-- (BARU) -->\
+            ] = await Promise.all([\
+                generateSummary(data.mapel, data.topik_pembelajaran),\
+                generateQuestions(data.topik_pembelajaran, data.tujuan_pembelajaran),\
+                generateIcebreaker(data.topik_pembelajaran),\
+                generateDesignDetails(data.mapel, data.jenjang, data.kelas, data.topik_pembelajaran, data.tujuan_pembelajaran),\
+                lkpdPromise, <!-- (BARU) -->\
+                generateRubrics(data.tujuan_pembelajaran, data.topik_pembelajaran, displayDimensi) <!-- (BARU) - gunakan 'displayDimensi' (teks) -->\
+            ]);\
+\
+            <!-- 4. Prepare Final Content -->\
+            const finalSummary = generatedSummaryMarkdown ? markdownToHtml(generatedSummaryMarkdown) : '<p class="text-red-500 text-sm">Gagal menghasilkan rangkuman materi. Pastikan koneksi dan coba lagi.</p>';\
+            const finalIcebreaker = generatedIcebreaker ? generatedIcebreaker : '<p class="text-red-500 text-sm">Gagal menghasilkan icebreaker. Pastikan koneksi dan coba lagi.</p>';\
+            const asesmenSumatifDetailFinal = generateAsesmenDetail('sumatif', data.topik_pembelajaran, data.topik_pembelajaran, generatedQuestions);\
+            \
+            <!-- (BARU) Siapkan HTML LKPD final -->\
+            let finalLKPD = '';\
+            if (butuhLKPD === 'ya') \{\
+                if (generatedLKPD) \{\
+                    finalLKPD = markdownToHtml(generatedLKPD);\
+                \} else \{\
+                    finalLKPD = '<p class="text-red-500 text-sm">Gagal menghasilkan LKPD. Coba lagi.</p>';\
+                \}\
+            \}\
+\
+            <!-- (BARU) Siapkan HTML Rubrik final -->\
+            const finalRubrics = generatedRubricsMarkdown ? markdownToHtml(generatedRubricsMarkdown) : '<p class="text-red-500 text-sm">Gagal menghasilkan rubrik. Pastikan koneksi dan coba lagi.</p>';\
+\
+\
+            <!-- 5. Buat data final dengan menggabungkan input pengguna dan hasil AI -->\
+            const finalData = \{\
+                ...data,\
+                ...generatedDesignDetails <!-- Ini akan berisi: peserta_didik, materi_pelajaran_analisis, lintas_disiplin, kemitraan, lingkungan, digital -->\
+            \};\
+\
+            <!-- 6. Rekonstruksi dan Tampilkan Output Akhir -->\
+            outputHTML = generateFullOutputHTML(\
+                finalData, \
+                calculatedTimeString, \
+                meetingBreakdownHTML, \
+                displayDimensi, \
+                asesmenAwalDetail, \
+                asesmenProsesDetail, \
+                asesmenSumatifDetailFinal, \
+                finalSummary, \
+                finalIcebreaker,\
+                finalLKPD, <!-- (BARU) -->\
+                finalRubrics <!-- (BARU) -->\
+            );\
+\
+            document.getElementById('plan-output').innerHTML = outputHTML;\
+\
+            <!-- 7. Selesaikan Loading -->\
+            document.getElementById('generate-button').disabled = false;\
+            document.getElementById('generate-button-text').innerText = 'Buat Perencanaan Pembelajaran';\
+        \}\
+\
+        <!-- ======================================================================= -->\
+        <!-- VI. FUNGSI UNDUH WORD -->\
+        <!-- ======================================================================= -->\
+        function downloadWord() \{\
+            <!-- 1. Dapatkan HTML dari kontainer hasil -->\
+            const contentDiv = document.getElementById('plan-output');\
+            if (!contentDiv) \{\
+                console.error("Elemen 'plan-output' tidak ditemukan.");\
+                return;\
+            \}\
+            let contentHTML = contentDiv.innerHTML;\
+            \
+            <!-- 2. Dapatkan Judul (dari input topik) -->\
+            const topik = document.getElementById('topik_pembelajaran').value || 'Perencanaan Pembelajaran';\
+            const filename = `Draf_RP_$\{topik.replace(/ /g, '_')\}.doc`;\
+\
+            <!-- UPDATE: Ambil data Kop Surat (DIHAPUS) -->\
+            <!-- const kopSurat = ... (DIHAPUS) -->\
+            <!-- const namaSekolah = ... (DIHAPUS) -->\
+            <!-- const alamatSekolah = ... (DIHAPUS) -->\
+            <!-- let letterheadHTML = ''; (DIHAPUS) -->\
+            <!-- ... (Logika if (kopSurat...) DIHAPUS) -->\
+            <!-- AKHIR UPDATE -->\
+\
+            <!-- 3. Buat template HTML untuk file Word -->\
+            const htmlTemplate = `\
+                <html xmlns:o='urn:schemas-microsoft-com:office:office'\
+                xmlns:w='urn:schemas-microsoft-com:office:word'\
+                xmlns='http://www.w3.org/TR/REC-html40'>\
+                <head>\
+                    <meta charset='utf-8'>\
+                    <title>$\{topik\}</title>\
+                    <!-- Style Word --><style>\
+                        /* Style dasar untuk Word */\
+                        @page WordSection1 \{\
+                            size: 21cm 29.7cm; /* A4 */\
+                            margin: 2cm 2cm 2cm 2cm; /* Margin standar */\
+                        \}\
+                        div.WordSection1 \{\
+                            page: WordSection1;\
+                        \}\
+                        body \{\
+                            font-family: 'Times New Roman', Times, serif;\
+                            font-size: 11pt;\
+                            line-height: 1.3;\
+                        \}\
+                        h1, h2, h3, h4, h5, h6 \{\
+                            font-family: 'Arial', sans-serif;\
+                            font-weight: bold;\
+                            margin-top: 16pt;\
+                            margin-bottom: 6pt;\
+                            line-height: 1.2;\
+                        \}\
+                        h2 \{ font-size: 16pt; \}\
+                        h3 \{ font-size: 14pt; border-bottom: 1px solid #000; padding-bottom: 2px; \}\
+                        h4 \{ font-size: 12pt; font-weight: bold; background-color: #F3F4F6; padding: 4pt; \}\
+                        h5 \{ font-size: 11pt; font-weight: bold; font-style: italic; \}\
+                        p \{\
+                            margin: 0 0 6pt 0;\
+                        \}\
+                        div \{ \
+                            margin: 0 0 6pt 0;\
+                        \}\
+                        ul, ol \{\
+                            margin-top: 0;\
+                            margin-bottom: 6pt;\
+                            padding-left: 30pt; /* Indentasi Word */\
+                        \}\
+                        li \{\
+                            margin-bottom: 4pt;\
+                        \}\
+                        strong \{\
+                            font-weight: bold;\
+                        \}\
+                        em \{\
+                            font-style: italic;\
+                        \}\
+                        /* Hapus style tailwind yang tidak perlu */\
+                        .text-sm \{ font-size: 10pt; \}\
+                        .text-base \{ font-size: 11pt; \}\
+                        .text-lg \{ font-size: 12pt; \}\
+                        .text-xl \{ font-size: 14pt; \}\
+                        .font-bold \{ font-weight: bold; \}\
+                        .font-semibold \{ font-weight: bold; \} /* Disamakan */\
+                        .italic \{ font-style: italic; \}\
+                        .pl-4 \{ padding-left: 20pt; \}\
+                        .mb-1 \{ margin-bottom: 2pt; \}\
+                        .mb-2 \{ margin-bottom: 4pt; \}\
+                        .mb-3 \{ margin-bottom: 6pt; \}\
+                        .mb-4 \{ margin-bottom: 8pt; \}\
+                        .mt-2 \{ margin-top: 4pt; \}\
+                        .mt-4 \{ margin-top: 8pt; \}\
+                        .mt-5 \{ margin-top: 10pt; \}\
+                        .space-y-1 > * + * \{ margin-top: 2pt; \}\
+                        .space-y-2 > * + * \{ margin-top: 4pt; \}\
+                        .space-y-3 > * + * \{ margin-top: 6pt; \}\
+                        .space-y-4 > * + * \{ margin-top: 8pt; \}\
+                        .space-y-5 > * + * \{ margin-top: 10pt; \}\
+                        .space-y-6 > * + * \{ margin-top: 12pt; \}\
+                        .space-y-8 > * + * \{ margin-top: 16pt; \}\
+                        .list-disc \{ list-style-type: disc; \}\
+                        .list-decimal \{ list-style-type: decimal; \}\
+                        .list-inside \{ list-style-position: inside; \}\
+                        .list-outside \{ list-style-position: outside; \}\
+                        .grid \{ display: block; \} /* Matikan grid */\
+                        \
+                        /* Atur Card style untuk print */\
+                        .bg-indigo-50, .bg-red-50, .bg-purple-50, .bg-orange-50, .border, .rounded-lg, .rounded-xl \{\
+                            border: 1px solid #AAAAAA;\
+                            padding: 10pt;\
+                            margin-bottom: 10pt;\
+                            background-color: #FFFFFF;\
+                        \}\
+                        .bg-gray-100 \{\
+                            background-color: #F3F4F6;\
+                        \}\
+                        .meeting-header \{\
+                            background-color: #4f46e5 !important;\
+                            color: white !important;\
+                            padding: 5px;\
+                            margin-top: 15px;\
+                            -webkit-print-color-adjust: exact;\
+                            print-color-adjust: exact;\
+                        \}\
+                        /* Warna teks */\
+                        .text-gray-600, .text-gray-700, .text-gray-800 \{ color: #000000; \}\
+                        .text-indigo-600, .text-indigo-700 \{ color: #000000; font-weight: bold; \}\
+                        .text-red-700, .text-purple-700, .text-orange-700 \{ color: #000000; font-weight: bold; \}\
+                        .text-green-700 \{ color: #006400; \} /* Jawaban benar */\
+                        .loading-text \{ display: none; \} /* Sembunyikan loading text di Word */\
+                        \
+                    </style>\
+                </head>\
+                <body>\
+                    <div class="WordSection1">\
+                        <!-- KOP SURAT (DIHAPUS) -->\
+                        <h2 style="text-align:center; border:none; margin-bottom: 20pt;">DRAF PERENCANAAN PEMBELAJARAN</h2>\
+                        $\{contentHTML\}\
+                    </div>\
+                </body>\
+                </html>\
+            `;\
+\
+            <!-- 4. Buat Blob -->\
+            const blob = new Blob(['\\ufeff', htmlTemplate], \{\
+                type: 'application/msword'\
+            \});\
+            \
+            <!-- 5. Buat Link Download dan Klik -->\
+            const link = document.createElement('a');\
+            if (link.download !== undefined) \{ <!-- Cek fitur download -->\
+                const url = URL.createObjectURL(blob);\
+                link.setAttribute('href', url);\
+                link.setAttribute('download', filename);\
+                link.style.visibility = 'hidden';\
+                document.body.appendChild(link);\
+                link.click();\
+                document.body.removeChild(link);\
+                URL.revokeObjectURL(url);\
+            \} else \{\
+                <!-- Fallback untuk browser lama -->\
+                window.open('data:application/msword,' + encodeURIComponent(htmlTemplate));\
+            \}\
+        \}\
+    </script>\
+</body>\
+</html>}
